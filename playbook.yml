@@ -19,30 +19,34 @@
       patterns: "{{ binary_name }}"
     register: binary_find_output
 
+  - name: "test"
+    debug:
+      msg: "{{ binary_find_output }}"
+
   - name: "Erstelle temporäres Verzeichnis"
     tempfile:
       path: "/tmp"
       state: directory
       suffix: build
     register: tempfolder
-    when: "binary_find_output.files[0].isreg == false"
+    when: "binary_find_output.matched == 0"
 
   - name: "Clone endlessh-Repo"
     git:
       repo: https://github.com/skeeto/endlessh.git
       dest: "{{ tempfolder.path }}"
-    when: "binary_find_output.files[0].isreg == false"
+    when: "binary_find_output.matched == 0"
 
   - name: "Kompilliere endlessh"
     make:
       chdir: "{{ tempfolder.path }}"
     register: compile_output
-    when: "binary_find_output.files[0].isreg == false"
+    when: "binary_find_output.matched == 0"
   
   - name: "Ausgabe Kompillierung"
     debug:
       msg: "{{ compile_output.stdout }}"
-    when: "binary_find_output.files[0].isreg == false"
+    when: "binary_find_output.matched == 0"
 
   - name: "Kopiere die Binary nach {{ install_path }}"
     copy:
@@ -50,19 +54,19 @@
       dest: "{{ install_path }}"
       mode: 0755
       remote_src: yes
-    when: "binary_find_output.files[0].isreg == false"
+    when: "binary_find_output.matched == 0"
 
   - name: "Lege Verzeichnis für die Konfiguration an"
     file:
       path: "/etc/endlessh"
       state: directory
-    when: "binary_find_output.files[0].isreg == false"
+    when: "binary_find_output.matched == 0"
 
   - name: "Anlegen der endlessh-config"
     template:
       src: "template/endlessh_config.j2"
       dest: "/etc/endlessh/config"
-    when: "binary_find_output.files[0].isreg == false"
+    when: "binary_find_output.matched == 0"
 
   - name: "Prüfe ob es bereits eine laufende Screen-Session gibt"
     shell: "screen -ls | grep {{ screen_session_name }}"
