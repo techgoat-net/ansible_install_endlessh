@@ -1,7 +1,15 @@
 ## Playbook um endlessh zu installieren
 
-* installiert (unabhängig vom Paketmanager) alle benötigten Pakete
-* klont das endlessh github-Repo
-* kompilliert endlessh
-* verschiebt die Binary
-* startet endlessh in einer screen-Session
+### Features ###
+* es wird sichergestellt, dass die benötigten Programme installiert sind
+* Installation der Pakete unabhängig vom Paketmanager
+* Prüfung ob die Binary bereits existiert   
+  * falls nicht, wird das github-Repo geklont, die Binary kompilliert und anschließend verschoben
+* Prüfung ob bereits eine `screen`-Session läuft
+  * falls nicht, wird eine entsprechende `screen`-Session gestartet
+
+
+**Aufruf:**
+```
+$ ansible-playbook -i <inventory-Datei> playbook.yml
+```
