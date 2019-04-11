@@ -19,10 +19,6 @@
       patterns: "{{ binary_name }}"
     register: binary_find_output
 
-  - name: "test"
-    debug:
-      msg: "{{ binary_find_output }}"
-
   - name: "Erstelle temporäres Verzeichnis"
     tempfile:
       path: "/tmp"
