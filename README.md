@@ -7,7 +7,7 @@
   * falls nicht, wird das github-Repo geklont, die Binary kompilliert und anschließend verschoben
 * Prüfung ob bereits eine `screen`-Session läuft
   * falls nicht, wird eine entsprechende `screen`-Session gestartet
-
+* Es lassen sich viele Werte bequem in der entsprechenden `group_vars` Datei setzen
 
 **Aufruf:**
 ```
