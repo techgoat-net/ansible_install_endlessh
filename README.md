@@ -1,6 +1,6 @@
 ## Playbook um endlessh zu installieren
 
-siehe [Techgoat.net}(https://techgoat.net)-Artikel: [Ein TARPIT erstellen](https://techgoat.net/index.php?id=168)
+siehe [Techgoat.net](https://techgoat.net)-Artikel: [Ein TARPIT erstellen](https://techgoat.net/index.php?id=168)
 
 ### Features ###
 * es wird sichergestellt, dass die benötigten Programme installiert sind
