@@ -1,0 +1,12 @@
+install_path: "/bin"
+binary_name: "endlessh"
+access_log: "/var/log/endless.log"
+error_log: "/var/log/endlessh.err"
+screen_session_name: "endlessh"
+
+### endlessh - Config ###
+port_number: 222
+endless_delay: 10000
+max_line_length: 32
+max_clients: 4096
+endlessh_loglevel: 1

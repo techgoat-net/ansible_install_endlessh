@@ -1,0 +1,83 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: "Installation der benötigten Programme"
+    action: >
+      {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+    loop:
+    - gcc
+    - automake
+    - cmake
+    - make
+    - git
+    - screen
+    - bash-completion
+  - name: "Prüfen ob endlessh bereits installiert ist"
+    find:
+      path: "{{ install_path }}"
+      patterns: "{{ binary_name }}"
+    register: binary_find_output
+
+  - name: "Erstelle temporäres Verzeichnis"
+    tempfile:
+      path: "/tmp"
+      state: directory
+      suffix: build
+    register: tempfolder
+    when: "binary_find_output.files[0].isreg == false"
+
+  - name: "Clone endlessh-Repo"
+    git:
+      repo: https://github.com/skeeto/endlessh.git
+      dest: "{{ tempfolder.path }}"
+    when: "binary_find_output.files[0].isreg == false"
+
+  - name: "Kompilliere endlessh"
+    make:
+      chdir: "{{ tempfolder.path }}"
+    register: compile_output
+    when: "binary_find_output.files[0].isreg == false"
+  
+  - name: "Ausgabe Kompillierung"
+    debug:
+      msg: "{{ compile_output.stdout }}"
+    when: "binary_find_output.files[0].isreg == false"
+
+  - name: "Kopiere die Binary nach {{ install_path }}"
+    copy:
+      src: "{{ tempfolder.path }}/{{ binary_name }}"
+      dest: "{{ install_path }}"
+      mode: 0755
+      remote_src: yes
+    when: "binary_find_output.files[0].isreg == false"
+
+  - name: "Lege Verzeichnis für die Konfiguration an"
+    file:
+      path: "/etc/endlessh"
+      state: directory
+    when: "binary_find_output.files[0].isreg == false"
+
+  - name: "Anlegen der endlessh-config"
+    template:
+      src: "template/endlessh_config.j2"
+      dest: "/etc/endlessh/config"
+    when: "binary_find_output.files[0].isreg == false"
+
+  - name: "Prüfe ob es bereits eine laufende Screen-Session gibt"
+    shell: "screen -ls | grep {{ screen_session_name }}"
+    register: search_screen_session
+    ignore_errors: true
+
+  - name: "Starte endlessh in Screen-Session"
+    shell: "screen -S endlessh -dm {{ install_path }}/{{ binary_name }} >{{ access_log }} 2>{{ error_log }}"
+    when: search_screen_session.rc == 1
+  
+  - name: "Suche alle laufenden Screen-Sessions"
+    shell: screen -ls
+    register: screen_ls
+    ignore_errors: true
+
+  - name: "Ausgabe der laufenden Screen-Sessions"
+    debug:
+      msg: "{{ screen_ls.stdout }}"

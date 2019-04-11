@@ -1,0 +1,21 @@
+# The port on which to listen for new SSH connections.
+Port {{ port_number }}
+
+# The endless banner is sent one line at a time. This is the delay
+# in milliseconds between individual lines.
+Delay {{ endless_delay }}
+
+# The length of each line is randomized. This controls the maximum
+# length of each line. Shorter lines may keep clients on for longer if
+# they give up after a certain number of bytes.
+MaxLineLength {{ max_line_length }}
+
+# Maximum number of connections to accept at a time. Connections beyond
+# this are not immediately rejected, but will wait in the queue.
+MaxClients {{ max_clients }}
+
+# Set the detail level for the log.
+#   0 = Quiet
+#   1 = Standard, useful log messages
+#   2 = Very noisy debugging information
+LogLevel {{ endlessh_loglevel }}
